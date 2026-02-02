@@ -3,9 +3,17 @@
 import Link from "next/link";
 import { useState } from "react";
 import SidebarNav from "./SidebarNav";
+import type { HeaderData } from "@/utils/siteInfo";
 
-export default function Header() {
+interface HeaderProps {
+  headerData?: HeaderData;
+}
+
+export default function Header({ headerData }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  
+  const siteName = headerData?.SiteName || "Senowell Systems";
+  const quickLinks = headerData?.QuickLinks || [];
 
   return (
     <header>
@@ -14,20 +22,22 @@ export default function Header() {
         <div className="w-11/12 flex justify-between items-center">
         {/* Logo/Brand */}
         <Link href="/" className="text-2xl font-bold text-blue-600">
-          Senowell Systems
+          {siteName}
         </Link>
 
           {/* Navigation Links */}
           <div className="flex gap-8">
-            <Link href="/about" className="text-gray-700 hover:text-gray-900">
-              About
-            </Link>
-            <Link href="/news" className="text-gray-700 hover:text-gray-900">
-              News
-            </Link>
-            <Link href="/contact" className="text-gray-700 hover:text-gray-900">
-              Contact Us
-            </Link>
+            {quickLinks.map((link) => (
+              <Link
+                key={link.id}
+                href={link.URL}
+                className="text-gray-700 hover:text-gray-900"
+                target={link.Open_In_New_Tab ? "_blank" : "_self"}
+                rel={link.Open_In_New_Tab ? "noopener noreferrer" : ""}
+              >
+                {link.Label}
+              </Link>
+            ))}
           </div>
         </div>
       </nav>
@@ -50,7 +60,7 @@ export default function Header() {
 
         {/* Logo/Brand - Float to right */}
         <Link href="/" className="text-2xl font-bold text-blue-600 ml-auto whitespace-nowrap">
-          Senowell Systems
+          {siteName}
         </Link>
       </nav>
 
@@ -81,32 +91,23 @@ export default function Header() {
 
             {/* SidebarNav for Mobile */}
             <div onClick={() => setIsMenuOpen(false)}>
-              <SidebarNav />
+              <SidebarNav menuData={headerData?.Menu} />
             </div>
             
             {/* Navigation Links */}
             <div className="flex flex-col gap-3 px-6 pb-6 flex-shrink-0">
-              <Link
-                href="/about"
-                className="text-base font-bold text-gray-900"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                About
-              </Link>
-              <Link
-                href="/news"
-                className="text-base font-bold text-gray-900"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                News
-              </Link>
-              <Link
-                href="/contact"
-                className="text-base font-bold text-gray-900"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Contact Us
-              </Link>
+              {quickLinks.map((link) => (
+                <Link
+                  key={link.id}
+                  href={link.URL}
+                  className="text-base font-bold text-gray-900"
+                  onClick={() => setIsMenuOpen(false)}
+                  target={link.Open_In_New_Tab ? "_blank" : "_self"}
+                  rel={link.Open_In_New_Tab ? "noopener noreferrer" : ""}
+                >
+                  {link.Label}
+                </Link>
+              ))}
             </div>
 
           </div>

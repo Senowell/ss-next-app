@@ -1,6 +1,16 @@
 import Link from "next/link";
+import type { FooterData } from "@/utils/siteInfo";
 
-export default function Footer() {
+interface FooterProps {
+  footerData?: FooterData;
+}
+
+export default function Footer({ footerData }: FooterProps) {
+  const siteName = footerData?.SiteName || "Senowell Systems";
+  const description = footerData?.SiteDescription || "Senowell Labs is an engineering firm with in-house technology able to implement any fiber-optic monitoring solution in your asset. We support our customers every step of the project.";
+  const copyright = footerData?.Copy_Right_Info || "Copyright © 2026 Senowell Systems. All rights reserved";
+  const quickLinks = footerData?.QuickLinks || [];
+
   return (
     <footer className="bg-white">
       {/* Footer Content Container */}
@@ -8,12 +18,10 @@ export default function Footer() {
         {/* Top Section - About */}
         <div className="mb-8 text-center md:text-left">
           <h2 className="text-2xl font-bold text-blue-600 mb-4">
-            Senowell Systems
+            {siteName}
           </h2>
           <p className="text-gray-700 text-base leading-relaxed max-w-3xl mx-auto md:mx-0">
-            Senowell Labs is an engineering firm with in-house technology able
-            to implement any fiber-optic monitoring solution in your asset. We
-            support our customers every step of the project.
+            {description}
           </p>
         </div>
 
@@ -21,22 +29,26 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row md:justify-between md:items-center items-center text-center md:text-left pt-4">
           {/* Copyright */}
           <p className="text-gray-700 text-sm mb-4 md:mb-0">
-            Copyright © 2026 Senowell Systems. All rights reserved
+            {copyright}
           </p>
 
           {/* Footer Links */}
           <div className="flex flex-col md:flex-row gap-4 md:gap-4 items-center md:items-center text-sm">
-            <Link href="/terms" className="text-gray-700 hover:text-gray-900">
-              Teams & Conditions
-            </Link>
-            <span className="text-gray-700 hidden md:inline">|</span>
-            <Link href="/privacy" className="text-gray-700 hover:text-gray-900">
-              Privacy Policy
-            </Link>
-            <span className="text-gray-700 hidden md:inline">|</span>
-            <Link href="/contact" className="text-gray-700 hover:text-gray-900">
-              Contact Us
-            </Link>
+            {quickLinks.map((link, index) => (
+              <div key={link.id} className="flex items-center gap-4">
+                <Link
+                  href={link.URL}
+                  className="text-gray-700 hover:text-gray-900"
+                  target={link.Open_In_New_Tab ? "_blank" : "_self"}
+                  rel={link.Open_In_New_Tab ? "noopener noreferrer" : ""}
+                >
+                  {link.Label}
+                </Link>
+                {index < quickLinks.length - 1 && (
+                  <span className="text-gray-700 hidden md:inline">|</span>
+                )}
+              </div>
+            ))}
           </div>
         </div>
       </div>
