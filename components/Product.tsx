@@ -5,12 +5,14 @@ export default function Product({
   title, 
   description,
   id = 1,
-  image = `https://placehold.co/400x400?text=Product+${id}`
+  image = `https://placehold.co/400x400?text=Product+${id}`,
+  imageHeight = "aspect-square"
 }: { 
   title: string; 
   description: string;
   id?: number;
   image?: string;
+  imageHeight?: string;
 }) {
   return (
     <Link href={`/products/${id}`}>
@@ -19,7 +21,7 @@ export default function Product({
         {/* Product Content */}
         <div className="p-3 flex flex-col gap-4">
           {/* Product Image Placeholder */}
-          <div className="w-full aspect-square relative rounded-lg overflow-hidden">
+          <div className={`w-full ${imageHeight} relative rounded-lg overflow-hidden`}>
             <Image
               src={image}
               alt={title}

@@ -43,14 +43,14 @@ export default function NewsPage() {
   return (
     <div className="w-full py-6">
       {/* News Header */}
-      <div className="w-full bg-gradient-to-r from-blue-600 to-blue-700 py-4 px-6 md:px-0 mb-8 rounded-lg">
+      <div className="bg-gradient-to-r from-blue-600 to-blue-700 py-6 px-6 md:px-12 mb-8 rounded-lg mx-6 md:mx-0">
         <h1 className="text-2xl md:text-3xl font-bold text-white text-center">
           News
         </h1>
       </div>
 
       {/* News Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mx-6 md:mx-0">
         {newsItems.map((item) => (
           <Product
             key={item.id}
@@ -58,6 +58,7 @@ export default function NewsPage() {
             title={item.title}
             description={item.description}
             image={item.image}
+            imageHeight="h-64"
           />
         ))}
       </div>
