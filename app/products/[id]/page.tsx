@@ -1,61 +1,80 @@
 import ProductGallery from "@/components/ProductGallery";
 import Downloads from "@/components/Downloads";
 import Product from "@/components/Product";
+import { notFound } from "next/navigation";
 
-export default function ProductDetailPage({ params }: { params: { id: string } }) {
-  const productImages = [
-    "https://placehold.co/800x800?text=Product+Image+1",
-    "https://placehold.co/800x800?text=Product+Image+2",
-    "https://placehold.co/800x800?text=Product+Image+3",
-    "https://placehold.co/800x800?text=Product+Image+4",
-    "https://placehold.co/800x800?text=Product+Image+5",
-    "https://placehold.co/800x800?text=Product+Image+6",
-  ];
+import {
+  formatFileSize,
+  getProductBySlug,
+  getProductImages,
+  getProductShortDescription,
+} from "@/utils/product";
 
-  const products = [
-    {
-      id: 1,
-      title: "Linear / distributed acoustic sensor (DAS)",
-      description: "Detection and identification of acoustic signals UTS-AS1000",
-    },
-    {
-      id: 2,
-      title: "Linear / distributed acoustic sensor (DAS)",
-      description: "Detection and identification of acoustic signals UTS-AS1000",
-    },
-    {
-      id: 3,
-      title: "Linear / distributed acoustic sensor (DAS)",
-      description: "Detection and identification of acoustic signals UTS-AS1000",
-    }
-  ];
+type RichTextNode = {
+  type?: string;
+  text?: string;
+  children?: RichTextNode[];
+};
 
-  const downloads = [
-    {
-      id: 1,
-      title: "Brochure: Railway Monitoring",
-      fileType: "PDF",
-      fileSize: "5.3 MB",
-    },
-    {
-      id: 2,
-      title: "Brochure: Railway Monitoring (PT)",
-      fileType: "PDF",
-      fileSize: "1.3 MB",
-    },
-    {
-      id: 3,
-      title: "Flyer: Rail Monitoring",
-      fileType: "PDF",
-      fileSize: "1.2 MB",
-    },
-    {
-      id: 4,
-      title: "Flyer: Track Condition Monitoring - Below Ballast Scan (BBS)",
-      fileType: "PDF",
-      fileSize: "1.0 MB",
-    },
-  ];
+function pickHeadingAndParagraph(blocks: unknown): { heading: string; paragraph: string } {
+  const list = Array.isArray(blocks) ? (blocks as RichTextNode[]) : [];
+
+  const headingBlock = list.find((b) => b?.type === "heading");
+  const paragraphBlock = list.find((b) => b?.type === "paragraph");
+
+  const flatten = (node: RichTextNode | undefined): string => {
+    if (!node) return "";
+    if (typeof node.text === "string") return node.text;
+    if (Array.isArray(node.children)) return node.children.map(flatten).join("");
+    return "";
+  };
+
+  const heading = Array.isArray(headingBlock?.children)
+    ? headingBlock.children.map(flatten).join("").trim()
+    : "";
+  const paragraph = Array.isArray(paragraphBlock?.children)
+    ? paragraphBlock.children.map(flatten).join("").trim()
+    : "";
+
+  return { heading, paragraph };
+}
+
+export default async function ProductDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const slug = typeof id === "string" ? id : "";
+  if (!slug) notFound();
+  const product = await getProductBySlug(slug);
+  if (!product) notFound();
+
+  const productImages = getProductImages(product);
+  const bannerTitle = product.Title;
+  const bannerSubtitle = getProductShortDescription(product);
+  const { heading, paragraph } = pickHeadingAndParagraph(product.Description);
+
+  const downloads = (product.downloads_section ?? []).map((d, idx) => {
+    const fileType = d.Category ?? (d.File?.name?.split(".").pop()?.toUpperCase() || "");
+    const fileSize = formatFileSize(d.File?.size);
+    return {
+      id: idx + 1,
+      title: d.Title,
+      fileType,
+      fileSize,
+    };
+  });
+
+  const associated = (product.associatedProducts ?? []).map((p, idx) => {
+    const firstImage = p.Gallery?.[0]?.url;
+    return {
+      id: p.Slug ?? p.documentId ?? String(idx + 1),
+      title: p.Title,
+      description: p.Subtitle ?? "",
+      image: firstImage,
+    };
+  });
 
   return (
     <div className="min-h-screen bg-white">
@@ -66,11 +85,11 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
         <div className="rounded-md mx-6 md:mx-auto md:w-12/12 my-6 py-12 px-0 text-center" style={{ backgroundColor: '#535253' }}>
           <div className="w-full">
             <h1 className="text-white text-2xl md:text-2xl font-bold mb-2">
-              Railway Road vehicle and track monitoring
+              {bannerTitle}
             </h1>
-            <p className="text-white text-lg md:text-lg font-semibold">
-              Detection and identification of acoustic signals UTS-AS1000
-            </p>
+            {bannerSubtitle ? (
+              <p className="text-white text-lg md:text-lg font-semibold">{bannerSubtitle}</p>
+            ) : null}
           </div>
         </div>
 
@@ -83,29 +102,31 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
             {/* Product Info - Right on Desktop, Bottom on Mobile */}
             <div className="flex flex-col justify-start">
               <h2 className="text-4xl md:text-xl font-bold text-gray-900 mb-6 leading-tight">
-                Intelligent traffic management and monitoring of road and vehicle conditions
+                {heading || bannerTitle}
               </h2>
 
-              <p className="text-gray-700 text-base md:text-md mb-8 leading-relaxed">
-                Ensuring safety from fires in transportation infrastructure is essential, as effective fire detection in areas like road/rail/metro tunnels or parking garages prevents disasters and protects lives. Fires in these confined spaces can escalate quickly, with severe consequences and high reconstruction costs. In such critical environments, time is crucial, making fast and reliable monitoring indispensable. AP Sensing's fiber optic Linear Heat Detection (LHD) technology offers a reliable monitoring solution, even under harshest conditions assets.
-              </p>
+              {paragraph ? (
+                <p className="text-gray-700 text-base md:text-md mb-8 leading-relaxed">{paragraph}</p>
+              ) : null}
             </div>
           </div>
         </div>
 
         {/* Downloads Section */}
-        <Downloads downloads={downloads} />
+        {downloads.length > 0 ? <Downloads downloads={downloads} /> : null}
 
         {/* Associated Equipment Section */}
         <div className="mx-6 md:mx-auto md:w-12/12 my-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-8">Associated Equipment</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {products.map((product) => (
+            {associated.map((product) => (
               <Product
                 key={product.id}
+                id={product.id}
                 title={product.title}
                 description={product.description}
+                image={product.image}
               />
             ))}
           </div>

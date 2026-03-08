@@ -32,18 +32,19 @@ export default function AboutPage() {
             </section>
 
             {/* Leadership Section */}
-            <section className="max-w-4xl mx-auto py-12 px-6">
+            <section className="max-w-6xl mx-auto">
                 <h2 className="text-2xl font-bold text-center mb-8">Leadership</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-2xl mx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
                 {/* Leader 1 */}
                 <div className="text-center">
-                    <div className="w-40 h-40 mx-auto mb-4 rounded-lg overflow-hidden bg-gray-200">
+                    <div className="w-full aspect-square mx-auto mb-4 rounded-lg overflow-hidden bg-gray-200">
                     <Image
-                        src="https://via.placeholder.com/160x160/535253/FFFFFF?text=Rufus+R+Manuel"
+                        src="https://placehold.co/400x400/535253/FFFFFF/png?text=Rufus+R+Manuel"
                         alt="Rufus R Manuel"
-                        width={160}
-                        height={160}
+                        width={200}
+                        height={200}
                         className="w-full h-full object-cover"
+                        priority
                     />
                     </div>
                     <h3 className="text-lg font-bold">Rufus R Manuel</h3>
@@ -64,13 +65,14 @@ export default function AboutPage() {
 
                 {/* Leader 2 */}
                 <div className="text-center">
-                    <div className="w-40 h-40 mx-auto mb-4 rounded-lg overflow-hidden bg-gray-200">
+                    <div className="w-full aspect-square mx-auto mb-4 rounded-lg overflow-hidden bg-gray-200">
                     <Image
-                        src="https://via.placeholder.com/160x160/535253/FFFFFF?text=Alan+Seymour"
+                        src="https://placehold.co/400x400/535253/FFFFFF/png?text=Alan+Seymour"
                         alt="Alan Seymour"
-                        width={160}
-                        height={160}
+                        width={200}
+                        height={200}
                         className="w-full h-full object-cover"
+                        priority
                     />
                     </div>
                     <h3 className="text-lg font-bold">Alan Seymour</h3>
@@ -101,29 +103,29 @@ export default function AboutPage() {
                     <div>
                         <p className="font-semibold mb-2">Comprehensive Support:</p>
                         <ul className="space-y-1 text-gray-200 text-sm">
-                        <li>· Senowell offers comprehensive service support through all</li>
-                        <li>· project phases: Consult, Understand, Define & Apply</li>
+                        <li>✓ Senowell offers comprehensive service support through all</li>
+                        <li>✓ project phases: Consult, Understand, Define & Apply</li>
                         </ul>
                     </div>
                     <div>
                         <p className="font-semibold mb-2">Planning & Design:</p>
                         <ul className="space-y-1 text-gray-200 text-sm">
-                        <li>· Recommend the most secure and economical solution</li>
-                        <li>· Develop designs meeting your requirements</li>
+                        <li>✓ Recommend the most secure and economical solution</li>
+                        <li>✓ Develop designs meeting your requirements</li>
                         </ul>
                     </div>
                     <div>
                         <p className="font-semibold mb-2">Integration & Deployment:</p>
                         <ul className="space-y-1 text-gray-200 text-sm">
-                        <li>· Ensure smooth integration with existing systems</li>
-                        <li>· Deploy project with skilled engineers</li>
+                        <li>✓ Ensure smooth integration with existing systems</li>
+                        <li>✓ Deploy project with skilled engineers</li>
                         </ul>
                     </div>
                     <div>
                         <p className="font-semibold mb-2">Support & Maintenance:</p>
                         <ul className="space-y-1 text-gray-200 text-sm">
-                        <li>· Ongoing technical support for seamless operation</li>
-                        <li>· Maintenance support with software updates & security patches</li>
+                        <li>✓ Ongoing technical support for seamless operation</li>
+                        <li>✓ Maintenance support with software updates & security patches</li>
                         </ul>
                     </div>
                     </div>
@@ -136,29 +138,29 @@ export default function AboutPage() {
                     <div>
                         <p className="font-semibold mb-2">Comprehensive Support:</p>
                         <ul className="space-y-1 text-gray-700 text-sm">
-                        <li>· Senowell offers comprehensive service support through all</li>
-                        <li>· project phases: Consult, Understand, Define & Apply</li>
+                        <li>✓ Senowell offers comprehensive service support through all</li>
+                        <li>✓ project phases: Consult, Understand, Define & Apply</li>
                         </ul>
                     </div>
                     <div>
                         <p className="font-semibold mb-2">Planning & Design:</p>
                         <ul className="space-y-1 text-gray-700 text-sm">
-                        <li>· Recommend the most secure and economical solution</li>
-                        <li>· Develop designs meeting your requirements</li>
+                        <li>✓ Recommend the most secure and economical solution</li>
+                        <li>✓ Develop designs meeting your requirements</li>
                         </ul>
                     </div>
                     <div>
                         <p className="font-semibold mb-2">Integration & Deployment:</p>
                         <ul className="space-y-1 text-gray-700 text-sm">
-                        <li>· Ensure smooth integration with existing systems</li>
-                        <li>· Deploy project with skilled engineers</li>
+                        <li>✓ Ensure smooth integration with existing systems</li>
+                        <li>✓ Deploy project with skilled engineers</li>
                         </ul>
                     </div>
                     <div>
                         <p className="font-semibold mb-2">Support & Maintenance:</p>
                         <ul className="space-y-1 text-gray-700 text-sm">
-                        <li>· Ongoing technical support for seamless operation</li>
-                        <li>· Maintenance support with software updates & security patches</li>
+                        <li>✓ Ongoing technical support for seamless operation</li>
+                        <li>✓ Maintenance support with software updates & security patches</li>
                         </ul>
                     </div>
                     </div>
@@ -175,13 +177,14 @@ export default function AboutPage() {
                         id: 1,
                         title: "Linear / distributed acoustic sensor (DAS)",
                         description: "Detection and identification of acoustic signals UTS-AS1000",
-                        image: "https://via.placeholder.com/600x400/E0E7FF/475569?text=News+Image+1"
+                        image: "https://placehold.co/400x400/535253/FFFFFF/png?text=News+Image+1",
+                        priority: true
                     },
                     {
                         id: 2,
                         title: "Linear / distributed acoustic sensor (DAS)",
                         description: "Detection and identification of acoustic signals UTS-AS1000",
-                        image: "https://via.placeholder.com/600x400/E0E7FF/475569?text=News+Image+2"
+                        image: "https://placehold.co/400x400/535253/FFFFFF/png?text=News+Image+2",
                     }
                 ].map((item) => (
                     <Product

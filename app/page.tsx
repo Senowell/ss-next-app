@@ -1,13 +1,19 @@
-import Image from "next/image";
 import FeaturedServices from "@/components/FeaturedServices";
 import FeaturedProducts from "@/components/FeaturedProducts";
-import ContactUs from "@/components/ContactUs";
+import { getHomeFeaturedProducts, type HomeFeaturedProduct } from "@/utils/homePage";
 
-export default function Home() {
+export default async function Home() {
+  let featuredProducts: HomeFeaturedProduct[] = [];
+  try {
+    featuredProducts = await getHomeFeaturedProducts();
+  } catch (e) {
+    console.error("Failed to load home page featured products", e);
+  }
+
   return (
     <div>
       <FeaturedServices />
-      <FeaturedProducts />
+      <FeaturedProducts products={featuredProducts} />
     </div>
   );
 }

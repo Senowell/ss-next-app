@@ -1,7 +1,12 @@
 import Product from "@/components/Product";
 import Downloads from "@/components/Downloads";
 
-export default function ServiceDetailPage({ params }: { params: { id: string } }) {
+export default async function ServiceDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  await params;
 
     const products = [
         {

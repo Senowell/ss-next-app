@@ -1,6 +1,7 @@
 interface FetchStrapiOptions {
   method?: string;
-  body?: any;
+  body?: unknown;
+  variables?: Record<string, unknown>;
 }
 
 export async function fetchStrapi(
@@ -11,8 +12,12 @@ export async function fetchStrapi(
   const baseUrl = process.env.NEXT_PUBLIC_STRAPI_URL;
   const token = process.env.STRAPI_API_TOKEN;
 
+  if (!baseUrl) {
+    throw new Error("NEXT_PUBLIC_STRAPI_URL is not set");
+  }
+
   let url = "";
-  let requestBody: any = options.body;
+  let requestBody: unknown = options.body;
   let method = options.method || "GET";
 
   // Handle GraphQL requests
@@ -21,18 +26,24 @@ export async function fetchStrapi(
     method = "POST";
     requestBody = {
       query: endpoint,
+      variables: options.variables,
     };
   } else {
     // Handle REST API requests
     url = `${baseUrl}/api${endpoint}`;
   }
 
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
   const res = await fetch(url, {
     method,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
+    headers,
     body: method !== "GET" ? JSON.stringify(requestBody) : undefined,
     next: { revalidate: 60 }, // ISR (App Router)
   });
