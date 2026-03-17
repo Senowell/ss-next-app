@@ -31,13 +31,24 @@ export interface HomeFeaturedProduct {
   Gallery: StrapiMedia[] | null;
 }
 
-export interface HomePageData {
-  homePage: {
-    featuredProducts: HomeFeaturedProduct[];
+export interface FeaturedService {
+  Title: string;
+  Slug: string | null;
+  FeaturedImage: {
+    url: string;
+    alternativeText: string | null;
+    caption: string | null;
   };
 }
 
-const HOME_PAGE_QUERY = `
+export interface HomePageData {
+  homePage: {
+    featuredProducts: HomeFeaturedProduct[];
+    featuredServices: FeaturedService[];
+  };
+}
+
+const HOME_PAGE_QUERY_PRODUCTS = `
   query HomePage {
     homePage {
       featuredProducts {
@@ -53,6 +64,22 @@ const HOME_PAGE_QUERY = `
           name
           size
           alternativeText
+        }
+      }
+    }
+  }
+`;
+
+const HOME_PAGE_QUERY_SERVICE = `
+  query HomePage {
+    homePage {
+      featuredServices {
+        Title
+        Slug
+        FeaturedImage {
+          url
+          alternativeText
+          caption
         }
       }
     }
@@ -96,6 +123,11 @@ export function withStrapiBaseUrl(pathOrUrl: string): string {
 }
 
 export async function getHomeFeaturedProducts(): Promise<HomeFeaturedProduct[]> {
-  const response = await fetchStrapi(HOME_PAGE_QUERY, {}, "graphql");
+  const response = await fetchStrapi(HOME_PAGE_QUERY_PRODUCTS, {}, "graphql");
   return (response?.data as HomePageData | undefined)?.homePage?.featuredProducts ?? [];
+}
+
+export async function getHomeFeaturedServices(): Promise<FeaturedService[]> {
+  const response = await fetchStrapi(HOME_PAGE_QUERY_SERVICE, {}, "graphql");
+  return (response?.data as HomePageData | undefined)?.homePage?.featuredServices ?? [];
 }

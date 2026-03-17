@@ -1,34 +1,42 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { withStrapiBaseUrl } from '@/utils/homePage';
 
-export default function FeaturedServices() {
-  const services = [
-    { id: 1, name: "Power Cable Monitoring" },
-    { id: 2, name: "Power Cable Monitoring" },
-    { id: 3, name: "Power Cable Monitoring" },
-    { id: 4, name: "Power Cable Monitoring" },
-    { id: 5, name: "Power Cable Monitoring" },
-    { id: 6, name: "Power Cable Monitoring" },
-    { id: 7, name: "Power Cable Monitoring" },
-    { id: 8, name: "Power Cable Monitoring" },
-    { id: 9, name: "Power Cable Monitoring" },
-    { id: 10, name: "Power Cable Monitoring" },
-  ];
+interface Service {
+  Title: string;
+  Slug: string | null;
+  FeaturedImage: {
+    url: string;
+    alternativeText: string | null;
+    caption: string | null;
+  };
+}
+
+interface FeaturedServicesProps {
+  services: Service[];
+}
+
+export default function FeaturedServices({ services = [] }: FeaturedServicesProps) {
+  if (!services || services.length === 0) {
+    return null;
+  }
 
   return (
     <section className="py-8 px-6 md:px-0">
       <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-2 md:gap-4">
-        {services.map((service) => (
+        {services.map((service, idx) => {
+          const slug = service.Slug || service.Title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+          return (
           <Link
-            key={service.id}
-            href={`/services/${service.id}`}
+            key={slug}
+            href={`/services/${slug}`}
             className="flex items-center gap-2 md:gap-4 p-1 border border-gray-300 rounded-lg bg-white hover:shadow-md transition-shadow cursor-pointer"
           >
             {/* Icon/Image Placeholder */}
             <div className="w-16 h-16 md:w-20 md:h-20 flex-shrink-0 relative">
               <Image
-                src="https://placehold.co/80x80?text=Service"
-                alt={service.name}
+                src={withStrapiBaseUrl(service.FeaturedImage?.url) || "https://placehold.co/80x80?text=Service"}
+                alt={service.FeaturedImage?.alternativeText || service.Title}
                 width={80}
                 height={80}
                 className="rounded-lg object-cover"
@@ -39,11 +47,12 @@ export default function FeaturedServices() {
             {/* Service Name */}
             <div className="flex-1 min-w-0">
               <h3 className="text-xs md:text-sm font-semibold text-gray-900 line-clamp-2">
-                {service.name}
+                {service.Title}
               </h3>
             </div>
           </Link>
-        ))}
+          );
+        })}
       </div>
     </section>
   );
