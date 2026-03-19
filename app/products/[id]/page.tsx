@@ -2,7 +2,7 @@ import ProductGallery from "@/components/ProductGallery";
 import Downloads from "@/components/Downloads";
 import Product from "@/components/Product";
 import { notFound } from "next/navigation";
-import type { ReactNode } from "react";
+import MarkdownRenderer from "@/components/MarkdownRenderer";
 
 import {
   formatFileSize,
@@ -11,62 +11,6 @@ import {
   getProductShortDescription,
 } from "@/utils/product";
 
-type RichTextNode = {
-  type?: string;
-  text?: string;
-  children?: RichTextNode[];
-  level?: number;
-};
-
-function flattenRichText(node: RichTextNode | undefined): string {
-  if (!node) return "";
-  if (typeof node.text === "string") return node.text;
-  if (Array.isArray(node.children)) return node.children.map(flattenRichText).join("");
-  return "";
-}
-
-function blockText(block: RichTextNode | undefined): string {
-  if (!block || !Array.isArray(block.children)) return "";
-  return block.children.map(flattenRichText).join("").trim();
-}
-
-function renderRichTextBlocks(blocks: unknown, omitIndex: number): ReactNode[] {
-  const list = Array.isArray(blocks) ? (blocks as RichTextNode[]) : [];
-
-  const nodes: ReactNode[] = [];
-
-  for (let idx = 0; idx < list.length; idx++) {
-    if (idx === omitIndex) continue;
-
-    const block = list[idx];
-    const text = blockText(block);
-
-    if (block?.type === "heading") {
-      if (!text) continue;
-      const level = typeof block.level === "number" ? block.level : 3;
-      const className = "text-gray-900 font-bold text-xl md:text-lg mt-6 mb-2";
-
-      if (level <= 1) nodes.push(<h1 key={`rt-h-${idx}`} className={className}>{text}</h1>);
-      else if (level === 2) nodes.push(<h2 key={`rt-h-${idx}`} className={className}>{text}</h2>);
-      else if (level === 3) nodes.push(<h3 key={`rt-h-${idx}`} className={className}>{text}</h3>);
-      else if (level === 4) nodes.push(<h4 key={`rt-h-${idx}`} className={className}>{text}</h4>);
-      else if (level === 5) nodes.push(<h5 key={`rt-h-${idx}`} className={className}>{text}</h5>);
-      else nodes.push(<h6 key={`rt-h-${idx}`} className={className}>{text}</h6>);
-
-      continue;
-    }
-
-    if (block?.type === "paragraph") {
-      nodes.push(
-        <p key={`rt-p-${idx}`} className="text-gray-700 text-base md:text-md leading-relaxed mb-4">
-          {text}
-        </p>
-      );
-    }
-  }
-
-  return nodes;
-}
 
 export default async function ProductDetailPage({
   params,
@@ -82,7 +26,6 @@ export default async function ProductDetailPage({
   const productImages = getProductImages(product);
   const bannerTitle = product.Title;
   const bannerSubtitle = getProductShortDescription(product);
-  const descriptionNodes = renderRichTextBlocks(product.Description, -1);
 
   const downloads = (product.downloads_section ?? []).map((d, idx) => {
     const fileType = d.Category ?? (d.File?.name?.split(".").pop()?.toUpperCase() || "");
@@ -130,7 +73,9 @@ export default async function ProductDetailPage({
 
             {/* Product Info - Right on Desktop, Bottom on Mobile */}
             <div className="flex flex-col justify-start">
-              {descriptionNodes.length > 0 ? <div>{descriptionNodes}</div> : null}
+              {product.Description && Array.isArray(product.Description) && product.Description.length > 0 ? (
+                <MarkdownRenderer content={product.Description} />
+              ) : null}
             </div>
           </div>
         </div>

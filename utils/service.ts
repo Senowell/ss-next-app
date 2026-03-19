@@ -134,15 +134,6 @@ export function getServiceAssociatedProducts(service: ServiceDetail) {
   });
 }
 
-/** Split a plain-text string (newline-separated) into trimmed paragraphs. */
-export function splitParagraphs(text: string | null | undefined): string[] {
-  if (!text) return [];
-  return text
-    .split(/\n{2,}/)
-    .map((p) => p.trim())
-    .filter(Boolean);
-}
-
 /** Convert the items string of a ServiceApplication (bullet list) into lines. */
 export function splitBulletItems(items: string | null | undefined): string[] {
   if (!items) return [];

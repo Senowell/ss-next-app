@@ -1,11 +1,11 @@
 import Product from "@/components/Product";
 import Downloads from "@/components/Downloads";
 import { notFound } from "next/navigation";
+import MarkdownRenderer from "@/components/MarkdownRenderer";
 import {
   getServiceBySlug,
   getServiceDownloads,
   getServiceAssociatedProducts,
-  splitParagraphs,
   splitBulletItems,
 } from "@/utils/service";
 
@@ -23,8 +23,6 @@ export default async function ServiceDetailPage({
 
   const downloads = getServiceDownloads(service);
   const associated = getServiceAssociatedProducts(service);
-  const descriptionParagraphs = splitParagraphs(service.Description);
-  const challengeParagraphs = splitParagraphs(service.ChallengeDescription);
 
   return (
     <div className="min-h-screen bg-white">
@@ -45,29 +43,23 @@ export default async function ServiceDetailPage({
         </div>
 
         {/* Service Overview */}
-        {descriptionParagraphs.length > 0 ? (
-          <div className="mx-6 md:mx-auto md:w-12/12 my-6 py-12 px-6 md:pl-36 text-center md:text-left">
-            <div className="space-y-6 text-gray-700 leading-relaxed">
-              {descriptionParagraphs.map((para, idx) => (
-                <p key={idx}>{para}</p>
-              ))}
-            </div>
+        {service.Description ? (
+          <div className="mx-6 md:mx-auto md:w-12/12 my-6 py-2 px-6 md:pl-36 text-center md:text-left">
+            <MarkdownRenderer content={service.Description} />
           </div>
         ) : null}
 
         {/* Challenge Section */}
-        {service.ChallengeTitle || challengeParagraphs.length > 0 ? (
+        {service.ChallengeTitle || service.ChallengeDescription ? (
           <div className="mx-6 md:mx-auto md:w-12/12 my-6 px-6 md:pl-36 text-center md:text-left">
             {service.ChallengeTitle ? (
               <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-6">
                 {service.ChallengeTitle}
               </h2>
             ) : null}
-            <div className="space-y-6 text-gray-700 leading-relaxed">
-              {challengeParagraphs.map((para, idx) => (
-                <p key={idx}>{para}</p>
-              ))}
-            </div>
+            {service.ChallengeDescription ? (
+              <MarkdownRenderer content={service.ChallengeDescription} />
+            ) : null}
           </div>
         ) : null}
 
