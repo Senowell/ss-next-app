@@ -14,6 +14,8 @@ export default function ContactPage() {
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const validateForm = () => {
@@ -78,31 +80,47 @@ export default function ContactPage() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     const newErrors = validateForm();
-    
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
 
-    // Here you would typically send the form data to your backend
-    console.log('Form submitted:', formData);
-    setSubmitted(true);
-    setErrors({});
-    setFormData({ 
-      firstName: '', 
-      lastName: '', 
-      email: '', 
-      phone: '', 
-      areaOfInterest: '',
-      message: '',
-      newsletter: false 
-    });
-    // Reset success message after 5 seconds
-    setTimeout(() => setSubmitted(false), 5000);
+    setSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error((data as { error?: string }).error ?? "Submission failed");
+      }
+
+      setSubmitted(true);
+      setErrors({});
+      setFormData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        areaOfInterest: "",
+        message: "",
+        newsletter: false,
+      });
+      setTimeout(() => setSubmitted(false), 5000);
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -166,6 +184,12 @@ export default function ContactPage() {
           {submitted && (
             <div className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
               Thank you for your inquiry! We will get back to you soon.
+            </div>
+          )}
+
+          {submitError && (
+            <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+              {submitError}
             </div>
           )}
 
@@ -330,9 +354,10 @@ export default function ContactPage() {
 
               <button
                 type="submit"
-                className="bg-red-500 hover:bg-red-600 text-white font-semibold py-3 px-8 rounded-lg transition-colors w-full md:w-auto"
+                disabled={submitting}
+                className="bg-red-500 hover:bg-red-600 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-3 px-8 rounded-lg transition-colors w-full md:w-auto"
               >
-                Submit
+                {submitting ? "Submitting..." : "Submit"}
               </button>
             </div>
           </form>
