@@ -1,5 +1,6 @@
 import Product from "@/components/Product";
 import Downloads from "@/components/Downloads";
+import FaqAccordion from "@/components/FaqAccordion";
 import { notFound } from "next/navigation";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
 import {
@@ -128,6 +129,9 @@ export default async function ServiceDetailPage({
             </div>
           </div>
         ) : null}
+
+        {/* FAQ Section */}
+        <FaqAccordion faqs={service.faqs ?? []} />
 
       </main>
     </div>

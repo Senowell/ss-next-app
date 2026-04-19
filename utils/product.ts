@@ -17,9 +17,15 @@ export interface ProductDownloadItem {
   } | null;
 }
 
+export interface FaqItem {
+  Question: string;
+  Answer: string;
+}
+
 export interface ProductDetail extends HomeFeaturedProduct {
   documentId?: string;
   downloads_section: ProductDownloadItem[] | null;
+  faqs: FaqItem[] | null;
   associatedProducts: Array<{
     Title: string;
     Subtitle: string | null;
@@ -69,6 +75,10 @@ const PRODUCT_BY_SLUG_QUERY = `
           size
           alternativeText
         }
+      }
+      faqs {
+        Question
+        Answer
       }
     }
   }

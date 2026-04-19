@@ -1,6 +1,7 @@
 import ProductGallery from "@/components/ProductGallery";
 import Downloads from "@/components/Downloads";
 import Product from "@/components/Product";
+import FaqAccordion from "@/components/FaqAccordion";
 import { notFound } from "next/navigation";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
 
@@ -99,6 +100,10 @@ export default async function ProductDetailPage({
             ))}
           </div>
         </div>
+
+        {/* FAQ Section */}
+        <FaqAccordion faqs={product.faqs ?? []} />
+
       </main>
     </div>
   );

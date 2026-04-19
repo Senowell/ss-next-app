@@ -32,6 +32,11 @@ export interface ServiceAssociatedProduct {
   Gallery: StrapiMedia[] | null;
 }
 
+export interface FaqItem {
+  Question: string;
+  Answer: string;
+}
+
 export interface ServiceDetail {
   HeroTitle: string;
   HeroSubtitle: string | null;
@@ -42,6 +47,7 @@ export interface ServiceDetail {
   ServiceAssert: ServiceAsset[] | null;
   DownloadsSection: ServiceDownloadItem[] | null;
   associatedProducts: ServiceAssociatedProduct[] | null;
+  faqs: FaqItem[] | null;
 }
 
 const SERVICE_BY_SLUG_QUERY = `
@@ -85,6 +91,10 @@ const SERVICE_BY_SLUG_QUERY = `
           size
           alternativeText
         }
+      }
+      faqs {
+        Question
+        Answer
       }
     }
   }
