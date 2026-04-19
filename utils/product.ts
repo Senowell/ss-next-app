@@ -84,28 +84,67 @@ const PRODUCT_BY_SLUG_QUERY = `
   }
 `;
 
+const PRODUCT_BY_SLUG_QUERY_NO_FAQS = `
+  query ProductBySlug($slug: String!) {
+    products(filters: { Slug: { eq: $slug } }) {
+      Title
+      Subtitle
+      Description
+      Slug
+      Gallery {
+        previewUrl
+        url
+        width
+        height
+        name
+        size
+        alternativeText
+      }
+      downloads_section {
+        Title
+        Description
+        Category
+        File {
+          url
+          name
+          size
+        }
+      }
+      associatedProducts {
+        Title
+        Subtitle
+        Slug
+        Gallery {
+          previewUrl
+          url
+          width
+          height
+          name
+          size
+          alternativeText
+        }
+      }
+    }
+  }
+`;
+
 function asArray<T>(value: unknown): T[] {
   return Array.isArray(value) ? (value as T[]) : [];
 }
 
-export async function getProductBySlug(slug: string): Promise<ProductDetail | null> {
-  if (!slug || typeof slug !== "string") return null;
-
-  const response = await fetchStrapi(PRODUCT_BY_SLUG_QUERY, { variables: { slug } }, "graphql");
-
-  // Supports a few possible shapes depending on Strapi GraphQL config
+function extractFirstProduct(response: unknown): ProductDetail | null {
   const data: unknown = (response as { data?: unknown } | undefined)?.data;
   const root = (data && typeof data === "object") ? (data as Record<string, unknown>) : undefined;
 
   const productsCandidate: unknown = root?.products;
-  const list = asArray<ProductDetail>(productsCandidate);
+  const list = asArray<ProductDetail>(productsCandidate).filter(Boolean);
   if (list.length > 0) return list[0];
 
   const nestedData =
     productsCandidate && typeof productsCandidate === "object"
       ? (productsCandidate as Record<string, unknown>).data
       : undefined;
-  const nestedList = asArray<ProductDetail>(nestedData);
+  const nestedList = asArray<ProductDetail>(nestedData).filter(Boolean);
   if (nestedList.length > 0) return nestedList[0];
 
   const attrsList = nestedList
@@ -118,6 +157,23 @@ export async function getProductBySlug(slug: string): Promise<ProductDetail | nu
   if (attrsList.length > 0) return attrsList[0];
 
   return null;
+}
+
+export async function getProductBySlug(slug: string): Promise<ProductDetail | null> {
+  if (!slug || typeof slug !== "string") return null;
+
+  const response = await fetchStrapi(PRODUCT_BY_SLUG_QUERY, { variables: { slug } }, "graphql");
+  const product = extractFirstProduct(response);
+  if (product) return product;
+
+  const fallbackResponse = await fetchStrapi(PRODUCT_BY_SLUG_QUERY_NO_FAQS, { variables: { slug } }, "graphql");
+  const fallbackProduct = extractFirstProduct(fallbackResponse);
+  if (!fallbackProduct) return null;
+
+  return {
+    ...fallbackProduct,
+    faqs: null,
+  };
 }
 
 export function getProductImages(product: { Gallery: StrapiMedia[] | null } | null | undefined): string[] {

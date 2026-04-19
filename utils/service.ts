@@ -100,23 +100,82 @@ const SERVICE_BY_SLUG_QUERY = `
   }
 `;
 
+const SERVICE_BY_SLUG_QUERY_NO_FAQS = `
+  query ServiceBySlug($slug: String!) {
+    services(filters: { Slug: { eq: $slug } }) {
+      HeroTitle
+      HeroSubtitle
+      Description
+      ChallengeTitle
+      ChallengeDescription
+      ServiceApplication {
+        id
+        title
+        items
+      }
+      ServiceAssert {
+        id
+        name
+      }
+      DownloadsSection {
+        id
+        Title
+        Category
+        Description
+        File {
+          url
+          name
+          size
+        }
+      }
+      associatedProducts {
+        Title
+        Subtitle
+        Slug
+        Gallery {
+          previewUrl
+          url
+          width
+          height
+          name
+          size
+          alternativeText
+        }
+      }
+    }
+  }
+`;
+
 function asArray<T>(value: unknown): T[] {
   return Array.isArray(value) ? (value as T[]) : [];
+}
+
+function extractFirstService(response: unknown): ServiceDetail | null {
+  const data: unknown = (response as { data?: unknown } | undefined)?.data;
+  const root = data && typeof data === "object" ? (data as Record<string, unknown>) : undefined;
+
+  const servicesCandidate: unknown = root?.services;
+  const list = asArray<ServiceDetail>(servicesCandidate).filter(Boolean);
+  if (list.length > 0) return list[0];
+
+  return null;
 }
 
 export async function getServiceBySlug(slug: string): Promise<ServiceDetail | null> {
   if (!slug || typeof slug !== "string") return null;
 
   const response = await fetchStrapi(SERVICE_BY_SLUG_QUERY, { variables: { slug } }, "graphql");
+  const service = extractFirstService(response);
+  if (service) return service;
 
-  const data: unknown = (response as { data?: unknown } | undefined)?.data;
-  const root = data && typeof data === "object" ? (data as Record<string, unknown>) : undefined;
+  const fallbackResponse = await fetchStrapi(SERVICE_BY_SLUG_QUERY_NO_FAQS, { variables: { slug } }, "graphql");
+  const fallbackService = extractFirstService(fallbackResponse);
+  if (!fallbackService) return null;
 
-  const servicesCandidate: unknown = root?.services;
-  const list = asArray<ServiceDetail>(servicesCandidate);
-  if (list.length > 0) return list[0];
-
-  return null;
+  return {
+    ...fallbackService,
+    faqs: null,
+  };
 }
 
 export function getServiceDownloads(service: ServiceDetail) {
