@@ -11,8 +11,8 @@ interface ProductGalleryProps {
 }
 
 export default function ProductGallery({ images }: ProductGalleryProps) {
-  const [mainSliderRef, setMainSliderRef] = useState<Slider | null>(null);
-  const [thumbSliderRef, setThumbSliderRef] = useState<Slider | null>(null);
+  const [mainSliderRef, setMainSliderRef] = useState<Slider | undefined>(undefined);
+  const [thumbSliderRef, setThumbSliderRef] = useState<Slider | undefined>(undefined);
 
   if (!images || images.length === 0) {
     return (
@@ -67,7 +67,7 @@ export default function ProductGallery({ images }: ProductGalleryProps) {
     <div className="w-full space-y-4 mb-4 md:mb-0">
       {/* Main Image Carousel */}
       <div className="w-full bg-gray-100 rounded-2xl overflow-hidden aspect-square relative">
-        <Slider ref={(slider: Slider | null) => setMainSliderRef(slider)} {...mainSettings}>
+        <Slider ref={(slider: Slider | null) => setMainSliderRef(slider ?? undefined)} {...mainSettings}>
           {images.map((image, index) => (
             <div key={index} className="w-full h-full">
               <div className="relative w-full aspect-square">
@@ -92,7 +92,7 @@ export default function ProductGallery({ images }: ProductGalleryProps) {
       {/* Thumbnails Carousel */}
       {images.length > 0 && (
         <div className="w-full">
-          <Slider ref={(slider: Slider | null) => setThumbSliderRef(slider)} {...thumbnailSettings}>
+          <Slider ref={(slider: Slider | null) => setThumbSliderRef(slider ?? undefined)} {...thumbnailSettings}>
             {images.map((image, index) => (
               <div key={index} className="px-2">
                 <button
