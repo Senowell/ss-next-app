@@ -1,9 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
 import RichTextRenderer from "@/components/RichTextRenderer";
+import SafeImage from "@/components/SafeImage";
+import { getStrapiMedia } from "@/utils/strapi";
 import {
   getAboutPage,
-  withStrapiBaseUrl,
   type AboutLeader,
   type AboutSolution,
   type AboutCompanyNews,
@@ -28,21 +28,20 @@ function TwitterIcon() {
 }
 
 function LeaderCard({ leader }: { leader: AboutLeader }) {
-  const photoUrl = leader.photo?.url
-    ? withStrapiBaseUrl(leader.photo.url)
-    : `https://placehold.co/400x400/535253/FFFFFF/png?text=${encodeURIComponent(leader.name)}`;
+  const photoUrl = getStrapiMedia(leader.photo?.url);
   const altText = leader.photo?.alternativeText ?? leader.name;
 
   return (
     <div className="text-center">
       <div className="w-full aspect-square mx-auto mb-4 rounded-lg overflow-hidden bg-gray-200 relative">
-        <Image
+        <SafeImage
           src={photoUrl}
           alt={altText}
           fill
           className="object-cover"
           unoptimized
           sizes="(max-width: 768px) 100vw, 50vw"
+          fallback={<div className="absolute inset-0 bg-gray-200" aria-hidden="true" />}
         />
       </div>
       <h3 className="text-lg font-bold">{leader.name}</h3>
@@ -95,9 +94,7 @@ function SolutionBlock({ solution }: { solution: AboutSolution }) {
 }
 
 function NewsCard({ item }: { item: AboutCompanyNews }) {
-  const imageUrl = item.CoverImage?.url
-    ? withStrapiBaseUrl(item.CoverImage.url)
-    : `https://placehold.co/800x400/535253/FFFFFF/png?text=${encodeURIComponent(item.Title)}`;
+  const imageUrl = getStrapiMedia(item.CoverImage?.url);
   const altText = item.CoverImage?.alternativeText ?? item.Title;
 
   return (
@@ -106,13 +103,14 @@ function NewsCard({ item }: { item: AboutCompanyNews }) {
       className="block group border border-gray-300 rounded-lg overflow-hidden bg-white hover:shadow-lg transition-shadow flex flex-col"
     >
       <div className="relative w-full h-56">
-        <Image
+        <SafeImage
           src={imageUrl}
           alt={altText}
           fill
           className="object-cover"
           unoptimized
           sizes="(max-width: 768px) 100vw, 50vw"
+          fallback={<div className="absolute inset-0 bg-gray-200" aria-hidden="true" />}
         />
       </div>
       <div className="p-4 flex flex-col gap-2 flex-1">

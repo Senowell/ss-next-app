@@ -1,18 +1,18 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import SafeImage from '@/components/SafeImage';
 
 interface ProductGalleryProps {
   images: string[];
 }
 
 export default function ProductGallery({ images }: ProductGalleryProps) {
-  const [mainSliderRef, setMainSliderRef] = useState<any>(null);
-  const [thumbSliderRef, setThumbSliderRef] = useState<any>(null);
+  const [mainSliderRef, setMainSliderRef] = useState<Slider | null>(null);
+  const [thumbSliderRef, setThumbSliderRef] = useState<Slider | null>(null);
 
   if (!images || images.length === 0) {
     return (
@@ -67,11 +67,11 @@ export default function ProductGallery({ images }: ProductGalleryProps) {
     <div className="w-full space-y-4 mb-4 md:mb-0">
       {/* Main Image Carousel */}
       <div className="w-full bg-gray-100 rounded-2xl overflow-hidden aspect-square relative">
-        <Slider ref={(slider: any) => setMainSliderRef(slider)} {...mainSettings}>
+        <Slider ref={(slider: Slider | null) => setMainSliderRef(slider)} {...mainSettings}>
           {images.map((image, index) => (
             <div key={index} className="w-full h-full">
               <div className="relative w-full aspect-square">
-                <Image
+                <SafeImage
                   src={image}
                   alt={`Product image ${index + 1}`}
                   fill
@@ -79,6 +79,9 @@ export default function ProductGallery({ images }: ProductGalleryProps) {
                   priority={index === 0}
                   unoptimized
                   sizes="(max-width: 768px) 100vw, 50vw"
+                  fallback={
+                    <div className="absolute inset-0 bg-gray-200" aria-hidden="true" />
+                  }
                 />
               </div>
             </div>
@@ -89,7 +92,7 @@ export default function ProductGallery({ images }: ProductGalleryProps) {
       {/* Thumbnails Carousel */}
       {images.length > 0 && (
         <div className="w-full">
-          <Slider ref={(slider: any) => setThumbSliderRef(slider)} {...thumbnailSettings}>
+          <Slider ref={(slider: Slider | null) => setThumbSliderRef(slider)} {...thumbnailSettings}>
             {images.map((image, index) => (
               <div key={index} className="px-2">
                 <button
@@ -97,13 +100,16 @@ export default function ProductGallery({ images }: ProductGalleryProps) {
                   aria-label={`View image ${index + 1}`}
                   type="button"
                 >
-                  <Image
+                  <SafeImage
                     src={image}
                     alt={`Thumbnail ${index + 1}`}
                     fill
                     className="object-cover"
                     unoptimized
                     sizes="100px"
+                    fallback={
+                      <div className="absolute inset-0 bg-gray-200" aria-hidden="true" />
+                    }
                   />
                 </button>
               </div>
@@ -147,24 +153,3 @@ export default function ProductGallery({ images }: ProductGalleryProps) {
     </div>
   );
 }
-
-/*
- * EXAMPLE USAGE:
- * 
- * import ProductGallery from '@/components/ProductGallery';
- * 
- * export default function ProductPage() {
- *   const productImages = [
- *     'https://placehold.co/800x800?text=Product+1',
- *     'https://placehold.co/800x800?text=Product+2',
- *     'https://placehold.co/800x800?text=Product+3',
- *     'https://placehold.co/800x800?text=Product+4',
- *   ];
- * 
- *   return (
- *     <div className="max-w-2xl mx-auto p-6">
- *       <ProductGallery images={productImages} />
- *     </div>
- *   );
- * }
- */

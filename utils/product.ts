@@ -1,7 +1,6 @@
-import { fetchStrapi } from "./strapi";
+import { fetchStrapi, getStrapiMedia } from "./strapi";
 import {
   richTextToPlainText,
-  withStrapiBaseUrl,
   type StrapiMedia,
   type HomeFeaturedProduct,
 } from "./homePage";
@@ -181,7 +180,8 @@ export function getProductImages(product: { Gallery: StrapiMedia[] | null } | nu
   return items
     .map((m) => m?.url)
     .filter((u): u is string => typeof u === "string" && u.length > 0)
-    .map(withStrapiBaseUrl);
+    .map(getStrapiMedia)
+    .filter(Boolean);
 }
 
 export function getProductShortDescription(

@@ -3,9 +3,9 @@ import Product from "./Product";
 import {
   getHomeFeaturedProducts,
   richTextToPlainText,
-  withStrapiBaseUrl,
   type HomeFeaturedProduct,
 } from "@/utils/homePage";
+import { getStrapiMedia } from "@/utils/strapi";
 
 type FeaturedProductsProps = {
   products?: HomeFeaturedProduct[];
@@ -28,7 +28,7 @@ export default async function FeaturedProducts({ products }: FeaturedProductsPro
     const description = (p.Subtitle ?? fallbackDescription ?? "").trim();
 
     const firstImage = p.Gallery?.[0]?.url;
-    const image = firstImage ? withStrapiBaseUrl(firstImage) : undefined;
+    const image = firstImage ? getStrapiMedia(firstImage) : undefined;
 
     const stableId = p.Slug ?? p.documentId ?? String(index + 1);
 

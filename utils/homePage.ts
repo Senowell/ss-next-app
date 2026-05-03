@@ -112,16 +112,6 @@ export function richTextToPlainText(blocks: unknown): string {
   return parts.join(" ");
 }
 
-export function withStrapiBaseUrl(pathOrUrl: string): string {
-  if (!pathOrUrl) return pathOrUrl;
-  if (pathOrUrl.startsWith("http://") || pathOrUrl.startsWith("https://")) return pathOrUrl;
-
-  const baseUrl = process.env.NEXT_PUBLIC_STRAPI_URL;
-  if (!baseUrl) return pathOrUrl;
-
-  return `${baseUrl.replace(/\/$/, "")}${pathOrUrl.startsWith("/") ? "" : "/"}${pathOrUrl}`;
-}
-
 export async function getHomeFeaturedProducts(): Promise<HomeFeaturedProduct[]> {
   const response = await fetchStrapi(HOME_PAGE_QUERY_PRODUCTS, {}, "graphql");
   return (response?.data as HomePageData | undefined)?.homePage?.featuredProducts ?? [];

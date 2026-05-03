@@ -4,17 +4,31 @@ interface FetchStrapiOptions {
   variables?: Record<string, unknown>;
 }
 
+export function getStrapiMedia(url?: string | null): string {
+  if (!url) return "";
+  if (url.startsWith("http")) return url;
+
+  const API_URL = process.env.NEXT_PUBLIC_STRAPI_URL;
+  if (!API_URL) return url;
+
+  const normalizedApiUrl = API_URL.replace(/\/+$/, "");
+  const normalizedPath = url.startsWith("/") ? url : `/${url}`;
+  return `${normalizedApiUrl}${normalizedPath}`;
+}
+
 export async function fetchStrapi(
   endpoint: string,
   options: FetchStrapiOptions = {},
   type: "rest" | "graphql" = "rest"
 ) {
-  const baseUrl = process.env.NEXT_PUBLIC_STRAPI_URL;
+  const API_URL = process.env.NEXT_PUBLIC_STRAPI_URL;
   const token = process.env.STRAPI_API_TOKEN;
 
-  if (!baseUrl) {
+  if (!API_URL) {
     throw new Error("NEXT_PUBLIC_STRAPI_URL is not set");
   }
+
+  const normalizedApiUrl = API_URL.replace(/\/+$/, "");
 
   let url = "";
   let requestBody: unknown = options.body;
@@ -22,7 +36,7 @@ export async function fetchStrapi(
 
   // Handle GraphQL requests
   if (type === "graphql") {
-    url = `${baseUrl}/graphql`;
+    url = `${normalizedApiUrl}/graphql`;
     method = "POST";
     requestBody = {
       query: endpoint,
@@ -30,7 +44,8 @@ export async function fetchStrapi(
     };
   } else {
     // Handle REST API requests
-    url = `${baseUrl}/api${endpoint}`;
+    const normalizedEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+    url = `${normalizedApiUrl}/api${normalizedEndpoint}`;
   }
 
   const headers: Record<string, string> = {

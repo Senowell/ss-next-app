@@ -64,11 +64,6 @@ const BLOG_BY_SLUG_QUERY = `
   }
 `;
 
-export function withStrapiBaseUrl(path: string): string {
-  const base = process.env.NEXT_PUBLIC_STRAPI_URL ?? "";
-  return `${base}${path}`;
-}
-
 export function formatBlogDate(dateStr: string | null): string {
   const raw = dateStr;
   if (!raw) return "";

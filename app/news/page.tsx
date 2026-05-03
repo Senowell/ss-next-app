@@ -1,6 +1,7 @@
 import Link from "next/link";
-import Image from "next/image";
-import { getBlogs, withStrapiBaseUrl, formatBlogDate, type Blog } from "@/utils/blog";
+import SafeImage from "@/components/SafeImage";
+import { getBlogs, formatBlogDate, type Blog } from "@/utils/blog";
+import { getStrapiMedia } from "@/utils/strapi";
 
 export default async function NewsPage() {
   let blogs: Blog[] = [];
@@ -37,9 +38,7 @@ export default async function NewsPage() {
       {!error && blogs.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mx-6 md:mx-0">
           {blogs.map((blog) => {
-            const imageUrl = blog.CoverImage?.url
-              ? withStrapiBaseUrl(blog.CoverImage.url)
-              : `https://placehold.co/800x400?text=${encodeURIComponent(blog.Title)}`;
+            const imageUrl = getStrapiMedia(blog.CoverImage?.url);
             const altText = blog.CoverImage?.alternativeText ?? blog.Title;
             const date = formatBlogDate(blog.PublishedDate ?? blog.publishedAt);
 
@@ -51,13 +50,14 @@ export default async function NewsPage() {
               >
                 {/* Cover Image */}
                 <div className="relative w-full h-56">
-                  <Image
+                  <SafeImage
                     src={imageUrl}
                     alt={altText}
                     fill
                     className="object-cover"
                     unoptimized
                     sizes="(max-width: 768px) 100vw, 50vw"
+                    fallback={<div className="absolute inset-0 bg-gray-200" aria-hidden="true" />}
                   />
                 </div>
 

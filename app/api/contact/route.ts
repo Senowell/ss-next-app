@@ -1,15 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
-  const baseUrl = process.env.NEXT_PUBLIC_STRAPI_URL;
+  const API_URL = process.env.NEXT_PUBLIC_STRAPI_URL;
   const token = process.env.STRAPI_API_TOKEN;
 
-  if (!baseUrl) {
+  if (!API_URL) {
     return NextResponse.json(
       { error: "Server configuration error" },
       { status: 500 }
     );
   }
+
+  const normalizedApiUrl = API_URL.replace(/\/+$/, "");
 
   let body: unknown;
   try {
@@ -36,7 +38,7 @@ export async function POST(req: NextRequest) {
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const strapiRes = await fetch(`${baseUrl}/api/contact-submissions`, {
+  const strapiRes = await fetch(`${normalizedApiUrl}/api/contact-submissions`, {
     method: "POST",
     headers,
     body: JSON.stringify({

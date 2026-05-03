@@ -1,11 +1,12 @@
 import Link from "next/link";
-import Image from "next/image";
+import SafeImage from "@/components/SafeImage";
+import { getStrapiMedia } from "@/utils/strapi";
 
 export default function Product({ 
   title, 
   description,
   id = 1,
-  image = `https://placehold.co/400x400?text=Product+${id}`,
+  image,
   imageHeight = "aspect-square"
 }: { 
   title: string; 
@@ -14,6 +15,8 @@ export default function Product({
   image?: string;
   imageHeight?: string;
 }) {
+  const imageSrc = getStrapiMedia(image);
+
   return (
     <Link href={`/products/${id}`} className="block h-full">
       <div className="h-full border border-gray-300 rounded-lg overflow-hidden bg-white cursor-pointer hover:shadow-lg transition-shadow flex flex-col">
@@ -22,13 +25,16 @@ export default function Product({
         <div className="p-3 flex flex-col gap-4 flex-1">
           {/* Product Image Placeholder */}
           <div className={`w-full ${imageHeight} relative rounded-lg overflow-hidden`}>
-            <Image
-              src={image}
+            <SafeImage
+              src={imageSrc}
               alt={title}
               fill
               className="object-cover"
               unoptimized
               sizes="100%"
+              fallback={
+                <div className="absolute inset-0 bg-gray-200" aria-hidden="true" />
+              }
             />
           </div>
 

@@ -1,6 +1,7 @@
-import Image from "next/image";
 import { notFound } from "next/navigation";
-import { getBlogBySlug, withStrapiBaseUrl, formatBlogDate } from "@/utils/blog";
+import SafeImage from "@/components/SafeImage";
+import { getBlogBySlug, formatBlogDate } from "@/utils/blog";
+import { getStrapiMedia } from "@/utils/strapi";
 import RichTextRenderer from "@/components/RichTextRenderer";
 
 export default async function BlogDetailPage({
@@ -14,9 +15,7 @@ export default async function BlogDetailPage({
   const blog = await getBlogBySlug(slug);
   if (!blog) notFound();
 
-  const imageUrl = blog.CoverImage?.url
-    ? withStrapiBaseUrl(blog.CoverImage.url)
-    : null;
+  const imageUrl = getStrapiMedia(blog.CoverImage?.url);
   const altText = blog.CoverImage?.alternativeText ?? blog.Title;
   const date = formatBlogDate(blog.PublishedDate ?? blog.publishedAt);
 
@@ -50,7 +49,7 @@ export default async function BlogDetailPage({
         {/* Cover Image */}
         {imageUrl && (
           <div className="relative w-full h-72 md:h-96 rounded-lg overflow-hidden mb-8">
-            <Image
+            <SafeImage
               src={imageUrl}
               alt={altText}
               fill
@@ -58,6 +57,7 @@ export default async function BlogDetailPage({
               unoptimized
               sizes="(max-width: 768px) 100vw, 896px"
               priority
+              fallback={<div className="absolute inset-0 bg-gray-200" aria-hidden="true" />}
             />
           </div>
         )}

@@ -1,5 +1,5 @@
-import { fetchStrapi } from "./strapi";
-import { withStrapiBaseUrl, type StrapiMedia } from "./homePage";
+import { fetchStrapi, getStrapiMedia } from "./strapi";
+import { type StrapiMedia } from "./homePage";
 import { formatFileSize } from "./product";
 
 export interface ServiceApplication {
@@ -198,7 +198,7 @@ export function getServiceAssociatedProducts(service: ServiceDetail) {
       id: p.Slug ?? String(idx + 1),
       title: p.Title,
       description: p.Subtitle ?? "",
-      image: firstImage ? withStrapiBaseUrl(firstImage) : undefined,
+      image: firstImage ? getStrapiMedia(firstImage) : undefined,
     };
   });
 }

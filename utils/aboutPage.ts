@@ -81,11 +81,6 @@ const ABOUT_PAGE_QUERY = `
   }
 `;
 
-export function withStrapiBaseUrl(path: string): string {
-  const base = process.env.NEXT_PUBLIC_STRAPI_URL ?? "";
-  return `${base}${path}`;
-}
-
 export async function getAboutPage(): Promise<AboutPageData | null> {
   const data = await fetchStrapi(ABOUT_PAGE_QUERY, {}, "graphql");
   return data?.data?.aboutPage ?? null;

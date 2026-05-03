@@ -1,6 +1,6 @@
-import Image from 'next/image';
 import Link from 'next/link';
-import { withStrapiBaseUrl } from '@/utils/homePage';
+import SafeImage from '@/components/SafeImage';
+import { getStrapiMedia } from '@/utils/strapi';
 
 interface Service {
   Title: string;
@@ -26,6 +26,7 @@ export default function FeaturedServices({ services = [] }: FeaturedServicesProp
       <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-2 md:gap-4">
         {services.map((service, idx) => {
           const slug = service.Slug || service.Title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+          const imageSrc = getStrapiMedia(service.FeaturedImage?.url);
           return (
           <Link
             key={slug}
@@ -34,13 +35,17 @@ export default function FeaturedServices({ services = [] }: FeaturedServicesProp
           >
             {/* Icon/Image Placeholder */}
             <div className="w-16 h-16 md:w-20 md:h-20 flex-shrink-0 relative">
-              <Image
-                src={withStrapiBaseUrl(service.FeaturedImage?.url) || "https://placehold.co/80x80?text=Service"}
+              <SafeImage
+                src={imageSrc}
                 alt={service.FeaturedImage?.alternativeText || service.Title}
-                width={80}
-                height={80}
+                fill
                 className="rounded-lg object-cover"
                 unoptimized
+                priority={idx === 0}
+                sizes="(max-width: 768px) 64px, 80px"
+                fallback={
+                  <div className="w-full h-full rounded-lg bg-gray-200" aria-hidden="true" />
+                }
               />
             </div>
 
