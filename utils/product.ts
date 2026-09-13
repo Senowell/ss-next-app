@@ -4,6 +4,7 @@ import {
   type StrapiMedia,
   type HomeFeaturedProduct,
 } from "./homePage";
+import type { VideoFieldData } from "@/components/VideoPlayer";
 
 export interface ProductDownloadItem {
   Title: string;
@@ -23,6 +24,7 @@ export interface FaqItem {
 
 export interface ProductDetail extends HomeFeaturedProduct {
   documentId?: string;
+  ProductVideo: VideoFieldData | null;
   downloads_section: ProductDownloadItem[] | null;
   faqs: FaqItem[] | null;
   associatedProducts: Array<{
@@ -79,6 +81,7 @@ const PRODUCT_BY_SLUG_QUERY = `
         Question
         Answer
       }
+      ProductVideo
     }
   }
 `;
@@ -123,6 +126,7 @@ const PRODUCT_BY_SLUG_QUERY_NO_FAQS = `
           alternativeText
         }
       }
+      ProductVideo
     }
   }
 `;

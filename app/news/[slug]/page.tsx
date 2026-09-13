@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import SafeImage from "@/components/SafeImage";
+import VideoPlayer from "@/components/VideoPlayer";
 import { getBlogBySlug, formatBlogDate } from "@/utils/blog";
 import { getStrapiMedia } from "@/utils/strapi";
 import RichTextRenderer from "@/components/RichTextRenderer";
@@ -59,6 +60,13 @@ export default async function BlogDetailPage({
               priority
               fallback={<div className="absolute inset-0 bg-gray-200" aria-hidden="true" />}
             />
+          </div>
+        )}
+
+        {/* Video */}
+        {blog.BlogVideo && (
+          <div className="my-8">
+            <VideoPlayer video={blog.BlogVideo} />
           </div>
         )}
 

@@ -1,4 +1,5 @@
 import { fetchStrapi } from "./strapi";
+import type { VideoFieldData } from "@/components/VideoPlayer";
 
 export interface BlogCoverImage {
   url: string;
@@ -14,6 +15,7 @@ export interface Blog {
   Summary: string | null;
   Content: unknown;
   CoverImage: BlogCoverImage | null;
+  BlogVideo: VideoFieldData | null;
   Author: string | null;
   Category: string | null;
   PublishedDate: string | null;
@@ -60,6 +62,7 @@ const BLOG_BY_SLUG_QUERY = `
         width
         height
       }
+      BlogVideo
     }
   }
 `;

@@ -1,4 +1,5 @@
 import { fetchStrapi } from "./strapi";
+import type { VideoFieldData } from "@/components/VideoPlayer";
 
 export interface AboutMedia {
   url: string;
@@ -40,6 +41,7 @@ export interface AboutPageData {
   leadership: AboutLeader[];
   Solutions: AboutSolution[];
   companyNews: AboutCompanyNews[];
+  AboutPageVideo: VideoFieldData | null;
 }
 
 const ABOUT_PAGE_QUERY = `
@@ -77,6 +79,7 @@ const ABOUT_PAGE_QUERY = `
           alternativeText
         }
       }
+      AboutPageVideo
     }
   }
 `;

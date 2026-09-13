@@ -1,6 +1,7 @@
 import Link from "next/link";
 import RichTextRenderer from "@/components/RichTextRenderer";
 import SafeImage from "@/components/SafeImage";
+import VideoPlayer from "@/components/VideoPlayer";
 import { getStrapiMedia } from "@/utils/strapi";
 import {
   getAboutPage,
@@ -142,6 +143,7 @@ export default async function AboutPage() {
   const leadership = about?.leadership ?? [];
   const solutions = about?.Solutions ?? [];
   const companyNews = (about?.companyNews ?? []).slice(0, 3);
+  const aboutVideo = about?.AboutPageVideo ?? null;
 
   return (
     <div className="min-h-screen bg-white">
@@ -173,6 +175,13 @@ export default async function AboutPage() {
               <RichTextRenderer content={introSection.content} />
             </div>
           </section>
+        )}
+
+        {/* Video Section */}
+        {aboutVideo && (
+          <div className="my-12 px-6">
+            <VideoPlayer video={aboutVideo} />
+          </div>
         )}
 
         {/* Leadership Section */}

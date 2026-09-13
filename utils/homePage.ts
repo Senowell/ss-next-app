@@ -1,4 +1,5 @@
 import { fetchStrapi } from "./strapi";
+import type { VideoFieldData } from "@/components/VideoPlayer";
 
 export interface StrapiMedia {
   previewUrl: string | null;
@@ -120,4 +121,17 @@ export async function getHomeFeaturedProducts(): Promise<HomeFeaturedProduct[]> 
 export async function getHomeFeaturedServices(): Promise<FeaturedService[]> {
   const response = await fetchStrapi(HOME_PAGE_QUERY_SERVICE, {}, "graphql");
   return (response?.data as HomePageData | undefined)?.homePage?.featuredServices ?? [];
+}
+
+const HOME_PAGE_QUERY_VIDEO = `
+  query HomePage {
+    homePage {
+      HomePageVideo
+    }
+  }
+`;
+
+export async function getHomePageVideo(): Promise<VideoFieldData | null> {
+  const response = await fetchStrapi(HOME_PAGE_QUERY_VIDEO, {}, "graphql");
+  return (response?.data as { homePage?: { HomePageVideo?: VideoFieldData } } | undefined)?.homePage?.HomePageVideo ?? null;
 }

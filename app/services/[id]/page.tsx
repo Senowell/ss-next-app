@@ -3,6 +3,7 @@ import Downloads from "@/components/Downloads";
 import FaqAccordion from "@/components/FaqAccordion";
 import { notFound } from "next/navigation";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
+import VideoPlayer from "@/components/VideoPlayer";
 import {
   getServiceBySlug,
   getServiceDownloads,
@@ -63,6 +64,13 @@ export default async function ServiceDetailPage({
             ) : null}
           </div>
         ) : null}
+
+        {/* Video */}
+        {service.ServiceVideo && (
+          <div className="mx-6 md:mx-auto md:w-12/12 my-8">
+            <VideoPlayer video={service.ServiceVideo} />
+          </div>
+        )}
 
         {/* Applications and Assets Section */}
         {((service.ServiceApplication?.length ?? 0) > 0 || (service.ServiceAssert?.length ?? 0) > 0) ? (

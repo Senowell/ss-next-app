@@ -1,6 +1,7 @@
 import { fetchStrapi, getStrapiMedia } from "./strapi";
 import { type StrapiMedia } from "./homePage";
 import { formatFileSize } from "./product";
+import type { VideoFieldData } from "@/components/VideoPlayer";
 
 export interface ServiceApplication {
   id: string;
@@ -43,6 +44,7 @@ export interface ServiceDetail {
   Description: string | null;
   ChallengeTitle: string | null;
   ChallengeDescription: string | null;
+  ServiceVideo: VideoFieldData | null;
   ServiceApplication: ServiceApplication[] | null;
   ServiceAssert: ServiceAsset[] | null;
   DownloadsSection: ServiceDownloadItem[] | null;
@@ -58,6 +60,7 @@ const SERVICE_BY_SLUG_QUERY = `
       Description
       ChallengeTitle
       ChallengeDescription
+      ServiceVideo
       ServiceApplication {
         id
         title
@@ -108,6 +111,7 @@ const SERVICE_BY_SLUG_QUERY_NO_FAQS = `
       Description
       ChallengeTitle
       ChallengeDescription
+      ServiceVideo
       ServiceApplication {
         id
         title

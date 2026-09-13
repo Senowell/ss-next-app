@@ -1,5 +1,6 @@
 import ProductGallery from "@/components/ProductGallery";
 import Downloads from "@/components/Downloads";
+import VideoPlayer from "@/components/VideoPlayer";
 import Product from "@/components/Product";
 import FaqAccordion from "@/components/FaqAccordion";
 import { notFound } from "next/navigation";
@@ -80,6 +81,13 @@ export default async function ProductDetailPage({
             </div>
           </div>
         </div>
+
+        {/* Video */}
+        {product.ProductVideo && (
+          <div className="mx-6 md:mx-auto md:w-12/12 my-8">
+            <VideoPlayer video={product.ProductVideo} />
+          </div>
+        )}
 
         {/* Downloads Section */}
         {downloads.length > 0 ? <Downloads downloads={downloads} /> : null}
